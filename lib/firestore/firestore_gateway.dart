@@ -83,6 +83,16 @@ class FirestoreGateway {
     return Document(this, response);
   }
 
+  Future<List<Document>> runQuery(
+    StructuredQuery structuredQuery,
+  ) {
+    final runQuery = RunQueryRequest()
+      ..structuredQuery = structuredQuery
+      ..parent = database;
+    final response = _client.runQuery(runQuery);
+    return response.map((event) => Document(this, event.document)).toList();
+  }
+
   Future<Document> getDocument(path) async {
     var rawDocument = await _client
         .getDocument(GetDocumentRequest()..name = path)
