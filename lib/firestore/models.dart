@@ -1,6 +1,8 @@
 import 'package:firedart/generated/google/firestore/v1/document.pb.dart' as fs;
+import 'package:firedart/generated/google/firestore/v1/query.pb.dart';
 import 'package:firedart/generated/google/protobuf/struct.pbenum.dart';
 import 'package:firedart/generated/google/protobuf/timestamp.pb.dart';
+import 'package:firedart/generated/google/protobuf/wrappers.pb.dart';
 import 'package:firedart/generated/google/type/latlng.pb.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:grpc/grpc.dart';
@@ -51,8 +53,12 @@ abstract class Reference {
 }
 
 class CollectionReference extends Reference {
+  StructuredQuery structuredQuery = StructuredQuery();
+
   CollectionReference(FirestoreGateway gateway, String path)
       : super(gateway, path) {
+    structuredQuery.from
+        .add(StructuredQuery_CollectionSelector()..collectionId = path);
     if (_fullPath.split('/').length % 2 == 1) {
       throw Exception('Path is not a collection: $path');
     }
@@ -61,8 +67,43 @@ class CollectionReference extends Reference {
   DocumentReference document(String id) {
     return DocumentReference(_gateway, '$path/$id');
   }
+  CollectionReference where(
+      String fieldPath,
+      StructuredQuery_FieldFilter_Operator op,
+      fs.Value value,
+      ) {
+    final compositeFilter = StructuredQuery_CompositeFilter();
+    final filter = StructuredQuery_Filter();
+    final fieldFilter = StructuredQuery_FieldFilter();
+    fieldFilter.value = value;
+    fieldFilter.op = op;
+    fieldFilter.field_1 = StructuredQuery_FieldReference()
+      ..fieldPath = fieldPath;
+    filter.fieldFilter = fieldFilter;
+    compositeFilter.filters.add(filter);
+    compositeFilter.op = StructuredQuery_CompositeFilter_Operator.AND;
+    structuredQuery.where = StructuredQuery_Filter()
+      ..compositeFilter = compositeFilter;
+    return this;
+  }
 
-  Future<List<Document>> get() => _gateway.getCollection(_fullPath);
+  CollectionReference orderBy(
+      String fieldPath,
+      StructuredQuery_Direction query_direction,
+      ) {
+    final orderBy = StructuredQuery_Order();
+    orderBy.field_1 = StructuredQuery_FieldReference()..fieldPath = fieldPath;
+    orderBy.direction = query_direction;
+    structuredQuery.orderBy.add(orderBy);
+    return this;
+  }
+
+  CollectionReference limit(int count) {
+    structuredQuery.limit = Int32Value()..value = count;
+    return this;
+  }
+
+  Future<List<Document>> getDocuments() => _gateway.runQuery(structuredQuery);
 
   Stream<List<Document>> get stream => _gateway.streamCollection(_fullPath);
 
