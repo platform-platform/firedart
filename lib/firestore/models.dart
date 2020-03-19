@@ -1,6 +1,6 @@
 import 'package:firedart/generated/google/firestore/v1/document.pb.dart' as fs;
 import 'package:firedart/generated/google/firestore/v1/query.pb.dart';
-import 'package:firedart/generated/google/protobuf/struct.pbenum.dart';
+import 'package:firedart/generated/google/protobuf/struct.pb.dart';
 import 'package:firedart/generated/google/protobuf/timestamp.pb.dart';
 import 'package:firedart/generated/google/protobuf/wrappers.pb.dart';
 import 'package:firedart/generated/google/type/latlng.pb.dart';
@@ -53,12 +53,13 @@ abstract class Reference {
 }
 
 class CollectionReference extends Reference {
-  StructuredQuery structuredQuery = StructuredQuery();
+  StructuredQuery _structuredQuery;
 
   CollectionReference(FirestoreGateway gateway, String path)
       : super(gateway, path) {
-    structuredQuery.from
-        .add(StructuredQuery_CollectionSelector()..collectionId = path);
+    _structuredQuery = StructuredQuery();
+    _structuredQuery.from
+        .add(StructuredQuery_CollectionSelector()..collectionId = id);
     if (_fullPath.split('/').length % 2 == 1) {
       throw Exception('Path is not a collection: $path');
     }
@@ -67,43 +68,81 @@ class CollectionReference extends Reference {
   DocumentReference document(String id) {
     return DocumentReference(_gateway, '$path/$id');
   }
+
   CollectionReference where(
-      String fieldPath,
-      StructuredQuery_FieldFilter_Operator op,
-      fs.Value value,
-      ) {
-    final compositeFilter = StructuredQuery_CompositeFilter();
+    String fieldPath, {
+    dynamic isEqualTo,
+    dynamic isLessThan,
+    dynamic isLessThanOrEqualTo,
+    dynamic isGreaterThan,
+    dynamic isGreaterThanOrEqualTo,
+    dynamic arrayContains,
+    List<dynamic> arrayContainsAny,
+    List<dynamic> whereIn,
+  }) {
+    final compositeFilter = (_structuredQuery.hasWhere() &&
+            _structuredQuery.where.hasCompositeFilter())
+        ? _structuredQuery.where.compositeFilter
+        : (StructuredQuery_CompositeFilter()
+          ..op = StructuredQuery_CompositeFilter_Operator.AND);
     final filter = StructuredQuery_Filter();
     final fieldFilter = StructuredQuery_FieldFilter();
-    fieldFilter.value = value;
-    fieldFilter.op = op;
+    if (isEqualTo != null) {
+      fieldFilter.value = _encode(isEqualTo);
+      fieldFilter.op = StructuredQuery_FieldFilter_Operator.EQUAL;
+    } else if (isLessThan != null) {
+      fieldFilter.value = _encode(isLessThan);
+      fieldFilter.op = StructuredQuery_FieldFilter_Operator.LESS_THAN;
+    } else if (isLessThanOrEqualTo != null) {
+      fieldFilter.value = _encode(isLessThanOrEqualTo);
+      fieldFilter.op = StructuredQuery_FieldFilter_Operator.LESS_THAN_OR_EQUAL;
+    } else if (isGreaterThan != null) {
+      fieldFilter.value = _encode(isGreaterThan);
+      fieldFilter.op = StructuredQuery_FieldFilter_Operator.GREATER_THAN;
+    } else if (isGreaterThanOrEqualTo != null) {
+      fieldFilter.value = _encode(isGreaterThanOrEqualTo);
+      fieldFilter.op =
+          StructuredQuery_FieldFilter_Operator.GREATER_THAN_OR_EQUAL;
+    } else if (arrayContains != null) {
+      fieldFilter.value = _encode(arrayContains);
+      fieldFilter.op = StructuredQuery_FieldFilter_Operator.ARRAY_CONTAINS;
+    } else if (arrayContainsAny != null) {
+      fieldFilter.value = _encode(arrayContainsAny);
+      fieldFilter.op = StructuredQuery_FieldFilter_Operator.ARRAY_CONTAINS_ANY;
+    } else if (whereIn != null) {
+      fieldFilter.value = _encode(whereIn);
+      fieldFilter.op = StructuredQuery_FieldFilter_Operator.IN;
+    } else {
+      throw Exception('Operator is not specified');
+    }
     fieldFilter.field_1 = StructuredQuery_FieldReference()
       ..fieldPath = fieldPath;
     filter.fieldFilter = fieldFilter;
     compositeFilter.filters.add(filter);
-    compositeFilter.op = StructuredQuery_CompositeFilter_Operator.AND;
-    structuredQuery.where = StructuredQuery_Filter()
+    _structuredQuery.where = StructuredQuery_Filter()
       ..compositeFilter = compositeFilter;
     return this;
   }
 
   CollectionReference orderBy(
-      String fieldPath,
-      StructuredQuery_Direction query_direction,
-      ) {
-    final orderBy = StructuredQuery_Order();
-    orderBy.field_1 = StructuredQuery_FieldReference()..fieldPath = fieldPath;
-    orderBy.direction = query_direction;
-    structuredQuery.orderBy.add(orderBy);
+    String fieldPath, {
+    bool descending = false,
+  }) {
+    final order = StructuredQuery_Order();
+    order.field_1 = StructuredQuery_FieldReference()..fieldPath = fieldPath;
+    order.direction = descending
+        ? StructuredQuery_Direction.DESCENDING
+        : StructuredQuery_Direction.ASCENDING;
+    _structuredQuery.orderBy.add(order);
     return this;
   }
 
   CollectionReference limit(int count) {
-    structuredQuery.limit = Int32Value()..value = count;
+    _structuredQuery.limit = Int32Value()..value = count;
     return this;
   }
 
-  Future<List<Document>> getDocuments() => _gateway.runQuery(structuredQuery);
+  Future<List<Document>> getDocuments() => _gateway.runQuery(_structuredQuery,_fullPath);
 
   Stream<List<Document>> get stream => _gateway.streamCollection(_fullPath);
 

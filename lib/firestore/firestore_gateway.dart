@@ -85,12 +85,16 @@ class FirestoreGateway {
 
   Future<List<Document>> runQuery(
     StructuredQuery structuredQuery,
+    String fullPath,
   ) {
     final runQuery = RunQueryRequest()
       ..structuredQuery = structuredQuery
-      ..parent = database;
+      ..parent = fullPath.substring(0, fullPath.lastIndexOf('/'));
     final response = _client.runQuery(runQuery);
-    return response.map((event) => Document(this, event.document)).toList();
+    return response
+        .where((event) => event.hasDocument())
+        .map((event) => Document(this, event.document))
+        .toList();
   }
 
   Future<Document> getDocument(path) async {
