@@ -7,6 +7,10 @@ Future main() async {
   TokenStore tokenStore;
   FirebaseAuth auth;
 
+  final apiKey = TestConfig.apiKey;
+  final email = TestConfig.email;
+  final password = TestConfig.password;
+
   setUp(() {
     tokenStore = VolatileStore();
     auth = FirebaseAuth(apiKey, tokenStore);

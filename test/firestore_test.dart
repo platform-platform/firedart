@@ -6,6 +6,10 @@ import 'package:test/test.dart';
 import 'test_config.dart';
 
 Future main() async {
+  final apiKey = TestConfig.apiKey;
+  final projectId = TestConfig.projectId;
+  final email = TestConfig.email;
+  final password = TestConfig.password;
   var tokenStore = VolatileStore();
   var auth = FirebaseAuth(apiKey, tokenStore);
   var firestore = Firestore(projectId, auth: auth);
