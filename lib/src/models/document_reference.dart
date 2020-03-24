@@ -1,4 +1,4 @@
-import 'package:firedart/src/repository/firestore_gateway.dart';
+import 'package:firedart/src/firestore/firestore_gateway.dart';
 import 'package:grpc/grpc.dart';
 
 import 'collection_reference.dart';

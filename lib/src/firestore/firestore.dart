@@ -1,9 +1,8 @@
 import 'package:firedart/src/auth/firebase_auth.dart';
+import 'package:firedart/src/firestore/firestore_gateway.dart';
 import 'package:firedart/src/models/collection_reference.dart';
 import 'package:firedart/src/models/document_reference.dart';
 import 'package:firedart/src/models/reference.dart';
-
-import 'firestore_gateway.dart';
 
 class Firestore {
   /* Singleton interface */

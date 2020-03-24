@@ -1,7 +1,7 @@
 import 'package:firedart/firedart.dart';
 import 'package:firedart/src/generated/google/firestore/v1/document.pb.dart'
     as fs;
-import 'package:firedart/src/repository/firestore_gateway.dart';
+import 'package:firedart/src/firestore/firestore_gateway.dart';
 import 'package:firedart/src/util/firestore_encoding.dart';
 import 'package:meta/meta.dart';
 

@@ -5,6 +5,7 @@ import 'package:firedart/src/auth/token_store.dart';
 import 'package:firedart/src/auth/user_gateway.dart';
 import 'package:http/http.dart' as http;
 
+
 class FirebaseAuth {
   /* Singleton interface */
   static FirebaseAuth _instance;
