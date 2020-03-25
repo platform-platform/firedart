@@ -26,8 +26,8 @@ abstract class Reference {
   }
 
   @override
-  bool operator ==(other) {
-    return runtimeType == other.runtimeType && fullPath == other.fullPath;
+  bool operator ==(Object other) {
+    return other is Reference && fullPath == other.fullPath;
   }
 
   @override
@@ -37,7 +37,7 @@ abstract class Reference {
 
   @protected
   fs.Document encodeMap(Map<String, dynamic> map) {
-    var document = fs.Document();
+    final document = fs.Document();
     map.forEach((key, value) {
       document.fields[key] = FirestoreEncoding.encode(value);
     });
@@ -45,7 +45,7 @@ abstract class Reference {
   }
 
   static String _trimSlashes(String path) {
-    path = path.startsWith('/') ? path.substring(1) : path;
-    return path.endsWith('/') ? path.substring(0, path.length - 2) : path;
+    final trimPath = path.startsWith('/') ? path.substring(1) : path;
+    return trimPath.endsWith('/') ? trimPath.substring(0, path.length - 2) : trimPath;
   }
 }

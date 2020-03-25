@@ -14,7 +14,7 @@ abstract class TokenStore {
   void setToken(
       String userId, String idToken, String refreshToken, int expiresIn) {
     assert(idToken != null && refreshToken != null && expiresIn != null);
-    var expiry = DateTime.now().add(Duration(seconds: expiresIn));
+    final expiry = DateTime.now().add(Duration(seconds: expiresIn));
     _token = Token(userId, idToken, refreshToken, expiry);
     write(_token);
   }
@@ -67,10 +67,10 @@ class Token {
 
   Token.fromMap(Map<String, dynamic> map)
       : this(
-          map['userId'],
-          map['idToken'],
-          map['refreshToken'],
-          DateTime.parse(map['expiry']),
+          map['userId'] as String,
+          map['idToken'] as String,
+          map['refreshToken'] as String,
+          DateTime.parse(map['expiry'] as String),
         );
 
   Map<String, dynamic> toMap() => {

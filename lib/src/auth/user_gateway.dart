@@ -14,8 +14,8 @@ class UserGateway {
       });
 
   Future<User> getUser() async {
-    var map = await _post('lookup', {});
-    return User.fromMap(map['users'][0]);
+    final map = await _post('lookup', {});
+    return User.fromMap(map['users'][0] as Map<String,dynamic>);
   }
 
   Future<void> changePassword(String password) async {
@@ -37,15 +37,15 @@ class UserGateway {
 
   Future<Map<String, dynamic>> _post<T>(
       String method, Map<String, String> body) async {
-    var requestUrl =
+    final requestUrl =
         'https://identitytoolkit.googleapis.com/v1/accounts:$method';
 
-    var response = await _client.post(
+    final response = await _client.post(
       requestUrl,
       body: body,
     );
 
-    return json.decode(response.body);
+    return json.decode(response.body) as Map<String,dynamic>;
   }
 }
 
@@ -57,11 +57,11 @@ class User {
   final bool emailVerified;
 
   User.fromMap(Map<String, dynamic> map)
-      : id = map['localId'],
-        displayName = map['displayName'],
-        photoUrl = map['photoUrl'],
-        email = map['email'],
-        emailVerified = map['emailVerified'];
+      : id = map['localId'] as String,
+        displayName = map['displayName'] as String,
+        photoUrl = map['photoUrl'] as String,
+        email = map['email'] as String,
+        emailVerified = map['emailVerified'] as bool;
 
   @override
   String toString() =>

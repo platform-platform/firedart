@@ -10,41 +10,43 @@ abstract class FirestoreEncoding {
   static fs.Value encode(dynamic value) {
     if (value == null) return fs.Value()..nullValue = NullValue.NULL_VALUE;
 
-    var type = value.runtimeType;
+    final type = value.runtimeType as Type;
 
     if (type.toString().startsWith('List')) {
-      var array = fs.ArrayValue();
-      (value as List).forEach((element) => array.values.add(encode(element)));
+      final array = fs.ArrayValue();
+      for(final element in value){
+        array.values.add(encode(element));
+      }
       return fs.Value()..arrayValue = array;
     }
 
     if (type.toString().contains('Map')) {
-      var map = fs.MapValue();
-      (value as Map).forEach((key, val) => map.fields[key] = encode(val));
+      final map = fs.MapValue();
+      (value as Map<String,dynamic>).forEach((key, val) => map.fields[key] = encode(val));
       return fs.Value()..mapValue = map;
     }
 
     if (type.toString() == 'Uint8List') {
-      return fs.Value()..bytesValue = value;
+      return fs.Value()..bytesValue = value as List<int>;
     }
 
     switch (type) {
       case bool:
-        return fs.Value()..booleanValue = value;
+        return fs.Value()..booleanValue = value as bool;
       case int:
-        return fs.Value()..integerValue = Int64(value);
+        return fs.Value()..integerValue = Int64(value as int);
       case double:
-        return fs.Value()..doubleValue = value;
+        return fs.Value()..doubleValue = value as double;
       case DateTime:
-        return fs.Value()..timestampValue = Timestamp.fromDateTime(value);
+        return fs.Value()..timestampValue = Timestamp.fromDateTime(value as DateTime);
       case String:
-        return fs.Value()..stringValue = value;
+        return fs.Value()..stringValue = value as String;
       case DocumentReference:
-        return fs.Value()..referenceValue = value._fullPath;
+        return fs.Value()..referenceValue = value.fullPath as String;
       case GeoPoint:
         return fs.Value()..geoPointValue = (value as GeoPoint).toLatLng();
       default:
-        throw Exception('Unknown type: ${type}');
+        throw Exception('Unknown type: $type');
     }
   }
 
@@ -76,7 +78,7 @@ abstract class FirestoreEncoding {
         return value.mapValue.fields
             .map((key, value) => MapEntry(key, decode(value, gateway)));
       default:
-        throw Exception('Unrecognized type: ${value}');
+        throw Exception('Unrecognized type: $value');
     }
   }
 }

@@ -23,23 +23,23 @@ class AuthGateway {
       });
 
   Future<User> _auth(String method, String email, String password) async {
-    var body = {
+    final body = {
       'email': email,
       'password': password,
       'returnSecureToken': 'true',
     };
 
-    var map = await _post(method, body);
+    final map = await _post(method, body);
     tokenProvider.setToken(map);
     return User.fromMap(map);
   }
 
   Future<Map<String, dynamic>> _post(
       String method, Map<String, String> body) async {
-    var requestUrl =
+    final requestUrl =
         'https://identitytoolkit.googleapis.com/v1/accounts:$method';
 
-    var response = await client.post(
+    final response = await client.post(
       requestUrl,
       body: body,
     );
@@ -48,6 +48,6 @@ class AuthGateway {
       throw Exception('${response.statusCode}: ${response.reasonPhrase}');
     }
 
-    return json.decode(response.body);
+    return json.decode(response.body) as Map<String,dynamic>;
   }
 }

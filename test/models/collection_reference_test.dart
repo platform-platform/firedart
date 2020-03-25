@@ -1,31 +1,34 @@
 import 'package:firedart/firedart.dart';
 import 'package:test/test.dart';
+import 'package:firedart/src/generated/google/firestore/v1/query.pb.dart';
+import 'package:firedart/src/generated/google/protobuf/wrappers.pb.dart';
+import 'package:firedart/src/util/firestore_encoding.dart';
 
-import '../test_config.dart';
-import '../test_data/collection_test_data.dart';
+import '../test_utils/test_utils.dart';
 
 void main() {
   group('CollectionReference', () {
-    final collectionReference = CollectionReferenceStub('test');
+    final collectionReference = _CollectionReferenceStub('test');
+
 
     test(
         'CollectionReference() should add new StructuredQuery_CollectionSelector to StructuredQuery.from field',
         () {
-      expect(CollectionTestData.collectionSelector,
+      expect(_testCollectionSelector,
           collectionReference.structuredQuery.from.first);
     });
     test(
         '.where(fieldPath,{}) should add new StructuredQuery_Filter to StructuredQuery.where.compositeFilter field',
         () {
       collectionReference.where('fieldPath', isEqualTo: 1);
-      expect(CollectionTestData.testCompositeFilter,
+      expect(_testCompositeFilter,
           equals(collectionReference.structuredQuery.where.compositeFilter));
     });
     test(
-      '.limit(n) should set StructuredQuery.limit field to n',
+      '.limit() should set value StructuredQuery.limit field',
       () {
         final structuredQuery = collectionReference.limit(1).structuredQuery;
-        expect(CollectionTestData.testLimit, structuredQuery.limit);
+        expect(_testLimit, structuredQuery.limit);
       },
     );
     test(
@@ -33,7 +36,7 @@ void main() {
       () {
         final structuredQuery =
             collectionReference.orderBy('fieldPath').structuredQuery;
-        expect(CollectionTestData.testOrderBy, structuredQuery.orderBy.first);
+        expect(_testOrderBy, structuredQuery.orderBy.first);
       },
     );
     test('.document(path) shoud create DocumentReference with new path', () {
@@ -47,6 +50,33 @@ void main() {
   });
 }
 
-class CollectionReferenceStub extends CollectionReference {
-  CollectionReferenceStub(String path) : super(FirestoreGatewayStub(), path);
+class _CollectionReferenceStub extends CollectionReference {
+  _CollectionReferenceStub(String path) : super(FirestoreGatewayStub(), path);
 }
+
+const StructuredQuery_CompositeFilter_Operator _filterOperator =
+    StructuredQuery_CompositeFilter_Operator.AND;
+const StructuredQuery_FieldFilter_Operator _fieldFilterOperator =
+    StructuredQuery_FieldFilter_Operator.EQUAL;
+const StructuredQuery_Direction _orderByDirection =
+    StructuredQuery_Direction.ASCENDING;
+const int _value = 1;
+const String _fieldPath = 'fieldPath';
+
+StructuredQuery_CollectionSelector _testCollectionSelector =
+StructuredQuery_CollectionSelector()..collectionId = 'test';
+StructuredQuery_CompositeFilter _testCompositeFilter =
+StructuredQuery_CompositeFilter()
+  ..op = _filterOperator
+  ..filters.add(
+    StructuredQuery_Filter()
+      ..fieldFilter = (StructuredQuery_FieldFilter()
+        ..op = _fieldFilterOperator
+        ..value = FirestoreEncoding.encode(_value)
+        ..field_1 =
+        (StructuredQuery_FieldReference()..fieldPath = _fieldPath)),
+  );
+StructuredQuery_Order _testOrderBy = StructuredQuery_Order()
+  ..field_1 = (StructuredQuery_FieldReference()..fieldPath = _fieldPath)
+  ..direction = _orderByDirection;
+Int32Value _testLimit = Int32Value()..value = _value;

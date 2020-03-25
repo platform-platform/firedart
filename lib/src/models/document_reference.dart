@@ -45,13 +45,13 @@ class DocumentReference extends Reference {
   /// Create or update a document.
   /// In the case of an update, any fields not referenced in the payload will be deleted.
   Future<void> set(Map<String, dynamic> map) async =>
-      gateway.updateDocument(fullPath, encodeMap(map), false);
+      gateway.updateDocument(fullPath, encodeMap(map), update: false);
 
   /// Create or update a document.
   /// In case of an update, fields not referenced in the payload will remain unchanged.
   Future<void> update(Map<String, dynamic> map) =>
-      gateway.updateDocument(fullPath, encodeMap(map), true);
+      gateway.updateDocument(fullPath, encodeMap(map), update: true);
 
   /// Deletes a document.
-  Future<void> delete() async => await gateway.deleteDocument(fullPath);
+  Future<void> delete() async => gateway.deleteDocument(fullPath);
 }

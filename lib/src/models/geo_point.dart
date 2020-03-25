@@ -9,8 +9,8 @@ class GeoPoint {
   GeoPoint.fromLatLng(LatLng value) : this(value.latitude, value.longitude);
 
   @override
-  bool operator ==(other) =>
-      runtimeType == other.runtimeType &&
+  bool operator ==(Object other) =>
+      other is GeoPoint &&
       latitude == other.latitude &&
       longitude == other.longitude;
 
