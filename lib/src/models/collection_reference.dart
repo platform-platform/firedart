@@ -25,6 +25,16 @@ class CollectionReference extends Reference {
     return DocumentReference(gateway, '$path/$id');
   }
 
+  /// Returns [CollectionReference] with additional filter on specified
+  /// [field]. [field] refers to a field in a document.
+  ///
+  /// The [field] may be a [String] consisting of a single field name
+  /// (referring to a top level field in the document),
+  /// or a series of field names separated by dots '.'
+  /// (referring to a nested field in the document).
+  ///
+  /// Only documents satisfying provided condition are included in the result
+  /// set.
   CollectionReference where(
     String fieldPath, {
     dynamic isEqualTo,
@@ -98,6 +108,12 @@ class CollectionReference extends Reference {
     return this;
   }
 
+  /// Returns [CollectionReference] that's additionally sorted by the specified
+  /// [field].
+  ///
+  /// The field is a [String] representing a single field name.
+  /// After a [CollectionReference] order by call, you cannot add any more [orderBy]
+  /// calls.
   CollectionReference orderBy(
     String fieldPath, {
     bool descending = false,
@@ -111,6 +127,8 @@ class CollectionReference extends Reference {
     return this;
   }
 
+  /// Returns CollectionReference that's additionally limited to only return up
+  /// to the specified number of documents.
   CollectionReference limit(int count) {
     _structuredQuery.limit = Int32Value()..value = count;
     return this;

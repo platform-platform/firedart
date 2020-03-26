@@ -1,7 +1,7 @@
 import 'package:firedart/firedart.dart';
 import 'package:test/test.dart';
 
-import 'test_config.dart';
+import 'test_config.dart.EDIT';
 
 Future main() async {
   TokenStore tokenStore;
