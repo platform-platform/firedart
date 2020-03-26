@@ -127,7 +127,7 @@ class CollectionReference extends Reference {
     return this;
   }
 
-  /// Returns CollectionReference that's additionally limited to only return up
+  /// Returns [CollectionReference] that's additionally limited to only return up
   /// to the specified number of documents.
   CollectionReference limit(int count) {
     _structuredQuery.limit = Int32Value()..value = count;
