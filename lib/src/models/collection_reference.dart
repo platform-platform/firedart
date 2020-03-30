@@ -57,55 +57,84 @@ class CollectionReference extends Reference {
     }
     final filter = StructuredQuery_Filter();
     if (isNull != null) {
-      if (!isNull) {
-        throw Exception(
-            "'isNull': isNull can only be set to true. Use isEqualTo to filter on non-null values.");
-      }
-      final unaryFilter = StructuredQuery_UnaryFilter();
-      unaryFilter.op = StructuredQuery_UnaryFilter_Operator.IS_NULL;
-      unaryFilter.field_2 = StructuredQuery_FieldReference()
-        ..fieldPath = fieldPath;
-      filter.unaryFilter = unaryFilter;
+      filter.unaryFilter = _createUnaryFilter(
+        fieldPath,
+        isNull,
+      );
     } else {
-      final fieldFilter = StructuredQuery_FieldFilter();
-      if (isEqualTo != null) {
-        fieldFilter.value = _encode(isEqualTo);
-        fieldFilter.op = StructuredQuery_FieldFilter_Operator.EQUAL;
-      } else if (isLessThan != null) {
-        fieldFilter.value = _encode(isLessThan);
-        fieldFilter.op = StructuredQuery_FieldFilter_Operator.LESS_THAN;
-      } else if (isLessThanOrEqualTo != null) {
-        fieldFilter.value = _encode(isLessThanOrEqualTo);
-        fieldFilter.op =
-            StructuredQuery_FieldFilter_Operator.LESS_THAN_OR_EQUAL;
-      } else if (isGreaterThan != null) {
-        fieldFilter.value = _encode(isGreaterThan);
-        fieldFilter.op = StructuredQuery_FieldFilter_Operator.GREATER_THAN;
-      } else if (isGreaterThanOrEqualTo != null) {
-        fieldFilter.value = _encode(isGreaterThanOrEqualTo);
-        fieldFilter.op =
-            StructuredQuery_FieldFilter_Operator.GREATER_THAN_OR_EQUAL;
-      } else if (arrayContains != null) {
-        fieldFilter.value = _encode(arrayContains);
-        fieldFilter.op = StructuredQuery_FieldFilter_Operator.ARRAY_CONTAINS;
-      } else if (arrayContainsAny != null) {
-        fieldFilter.value = _encode(arrayContainsAny);
-        fieldFilter.op =
-            StructuredQuery_FieldFilter_Operator.ARRAY_CONTAINS_ANY;
-      } else if (whereIn != null) {
-        fieldFilter.value = _encode(whereIn);
-        fieldFilter.op = StructuredQuery_FieldFilter_Operator.IN;
-      } else {
-        throw Exception('Operator is not specified');
-      }
-      fieldFilter.field_1 = StructuredQuery_FieldReference()
-        ..fieldPath = fieldPath;
-      filter.fieldFilter = fieldFilter;
+      filter.fieldFilter = _createFieldFilter(
+        fieldPath,
+        isEqualTo,
+        isLessThan,
+        isLessThanOrEqualTo,
+        isGreaterThan,
+        isGreaterThanOrEqualTo,
+        arrayContains,
+        arrayContainsAny,
+        whereIn,
+      );
     }
     compositeFilter.filters.add(filter);
     _structuredQuery.where = StructuredQuery_Filter()
       ..compositeFilter = compositeFilter;
     return this;
+  }
+  /// Create [StructuredQuery_UnaryFilter] by provided [fieldPath] and [isNull] condition
+  StructuredQuery_UnaryFilter _createUnaryFilter(
+      String fieldPath, bool isNull) {
+    if (!isNull) {
+      throw Exception(
+          "'isNull': isNull can only be set to true. Use isEqualTo to filter on non-null values.");
+    }
+    final unaryFilter = StructuredQuery_UnaryFilter();
+    unaryFilter.op = StructuredQuery_UnaryFilter_Operator.IS_NULL;
+    return unaryFilter
+      ..field_2 = (StructuredQuery_FieldReference()..fieldPath = fieldPath);
+  }
+
+  /// Create [StructuredQuery_FieldFilter] by provided condition and [fieldPath]
+  StructuredQuery_FieldFilter _createFieldFilter(
+    String fieldPath,
+    dynamic isEqualTo,
+    dynamic isLessThan,
+    dynamic isLessThanOrEqualTo,
+    dynamic isGreaterThan,
+    dynamic isGreaterThanOrEqualTo,
+    dynamic arrayContains,
+    List<dynamic> arrayContainsAny,
+    List<dynamic> whereIn,
+  ) {
+    final fieldFilter = StructuredQuery_FieldFilter();
+    if (isEqualTo != null) {
+      fieldFilter.value = _encode(isEqualTo);
+      fieldFilter.op = StructuredQuery_FieldFilter_Operator.EQUAL;
+    } else if (isLessThan != null) {
+      fieldFilter.value = _encode(isLessThan);
+      fieldFilter.op = StructuredQuery_FieldFilter_Operator.LESS_THAN;
+    } else if (isLessThanOrEqualTo != null) {
+      fieldFilter.value = _encode(isLessThanOrEqualTo);
+      fieldFilter.op = StructuredQuery_FieldFilter_Operator.LESS_THAN_OR_EQUAL;
+    } else if (isGreaterThan != null) {
+      fieldFilter.value = _encode(isGreaterThan);
+      fieldFilter.op = StructuredQuery_FieldFilter_Operator.GREATER_THAN;
+    } else if (isGreaterThanOrEqualTo != null) {
+      fieldFilter.value = _encode(isGreaterThanOrEqualTo);
+      fieldFilter.op =
+          StructuredQuery_FieldFilter_Operator.GREATER_THAN_OR_EQUAL;
+    } else if (arrayContains != null) {
+      fieldFilter.value = _encode(arrayContains);
+      fieldFilter.op = StructuredQuery_FieldFilter_Operator.ARRAY_CONTAINS;
+    } else if (arrayContainsAny != null) {
+      fieldFilter.value = _encode(arrayContainsAny);
+      fieldFilter.op = StructuredQuery_FieldFilter_Operator.ARRAY_CONTAINS_ANY;
+    } else if (whereIn != null) {
+      fieldFilter.value = _encode(whereIn);
+      fieldFilter.op = StructuredQuery_FieldFilter_Operator.IN;
+    } else {
+      throw Exception('Operator is not specified');
+    }
+    return fieldFilter
+      ..field_1 = (StructuredQuery_FieldReference()..fieldPath = fieldPath);
   }
 
   /// Returns [CollectionReference] that's additionally sorted by the specified
@@ -133,11 +162,12 @@ class CollectionReference extends Reference {
     _structuredQuery.limit = Int32Value()..value = count;
     return this;
   }
-
+  /// Delegates [FirebaseEncoding.encode] functionality
   fs.Value _encode(dynamic value) {
     return FirestoreEncoding.encode(value);
   }
 
+  /// Fetch the documents for this [_structuredQuery]
   Future<List<Document>> getDocuments() =>
       gateway.runQuery(_structuredQuery, fullPath);
 

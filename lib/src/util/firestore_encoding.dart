@@ -12,13 +12,13 @@ abstract class FirestoreEncoding {
 
     var type = value.runtimeType;
 
-    if (type.toString().startsWith('List')) {
+    if (type is List) {
       var array = fs.ArrayValue();
       (value as List).forEach((element) => array.values.add(encode(element)));
       return fs.Value()..arrayValue = array;
     }
 
-    if (type.toString().contains('Map')) {
+    if (type is Map) {
       var map = fs.MapValue();
       (value as Map).forEach((key, val) => map.fields[key] = encode(val));
       return fs.Value()..mapValue = map;
