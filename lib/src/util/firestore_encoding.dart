@@ -6,7 +6,9 @@ import 'package:firedart/src/generated/google/protobuf/timestamp.pb.dart';
 import 'package:firedart/src/repository/firestore_gateway.dart';
 import 'package:fixnum/fixnum.dart';
 
+/// An abstract util class which provides firestore decode and encode static methods.
 abstract class FirestoreEncoding {
+  /// Encode dart object into related [fs.Value].
   static fs.Value encode(dynamic value) {
     if (value == null) return fs.Value()..nullValue = NullValue.NULL_VALUE;
 
@@ -48,6 +50,7 @@ abstract class FirestoreEncoding {
     }
   }
 
+  /// Decode [fs.value] into related dart object.
   static dynamic decode(fs.Value value, FirestoreGateway gateway) {
     switch (value.whichValueType()) {
       case fs.Value_ValueType.nullValue:

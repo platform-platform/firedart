@@ -5,22 +5,30 @@ import 'package:firedart/src/util/firestore_encoding.dart';
 
 import 'document_reference.dart';
 
+/// A [Document] contains data read from a document in your Firestore
+/// database.
+/// The data can be extracted with the data property.
 class Document {
   final FirestoreGateway _gateway;
   final fs.Document _rawDocument;
 
   Document(this._gateway, this._rawDocument);
 
-  String get id => path.substring(path.lastIndexOf('/') + 1);
+  /// Returns the ID of the document.
+  String get id => path.split('/').last;
 
+  /// Returns the path of the document.
   String get path =>
       _rawDocument.name.substring(_rawDocument.name.indexOf('/documents') + 10);
 
+  /// Contains all the data of this document.
   Map<String, dynamic> get map =>
       _rawDocument.fields.map((key, _) => MapEntry(key, this[key]));
 
+  /// The reference that produced this document.
   DocumentReference get reference => DocumentReference(_gateway, path);
 
+  /// Reads individual values from the document.
   dynamic operator [](String key) {
     if (!_rawDocument.fields.containsKey(key)) return null;
     return FirestoreEncoding.decode(_rawDocument.fields[key], _gateway);

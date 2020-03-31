@@ -5,7 +5,16 @@ import 'collection_reference.dart';
 import 'document.dart';
 import 'reference.dart';
 
+/// A [DocumentReference] refers to a document location in a Firestore database
+/// and can be used to write, read, or listen to the location.
+///
+/// The document at the referenced location may or may not exist.
+/// A [DocumentReference] can also be used to create a [CollectionReference]
+/// to a subcollection.
 class DocumentReference extends Reference {
+  /// Constructs a [DocumentReference] using [FirestoreGateway] and path.
+  ///
+  /// Throws [Exception] if path contains even amount of '/'.
   DocumentReference(FirestoreGateway gateway, String path)
       : super(gateway, path) {
     if (fullPath.split('/').length % 2 == 0) {
@@ -13,15 +22,21 @@ class DocumentReference extends Reference {
     }
   }
 
+  /// Returns the reference of a collection contained inside of this
+  /// document.
   CollectionReference collection(String id) {
     return CollectionReference(gateway, '$path/$id');
   }
 
+  /// Reads the document referenced by this [DocumentReference].
+  ///
+  /// If no document exists, the read throw [GrpcError].
   Future<Document> get() => gateway.getDocument(fullPath);
 
   @Deprecated('Use the stream getter instead')
   Stream<Document> subscribe() => stream;
 
+  /// Notifies of documents at this location.
   Stream<Document> get stream => gateway.streamDocument(fullPath);
 
   /// Check if a document exists.

@@ -8,9 +8,16 @@ import 'package:firedart/src/models/reference.dart';
 import 'package:firedart/src/repository/firestore_gateway.dart';
 import 'package:firedart/src/util/firestore_encoding.dart';
 
+/// A [CollectionReference] object can be used for adding documents, getting
+/// document references, and querying for documents.
 class CollectionReference extends Reference {
   StructuredQuery _structuredQuery;
 
+  /// Constructs a [CollectionReference] using [FirestoreGateway] and path.
+  ///
+  /// Init [StructuredQuery] with additional filter on collectionId.
+  ///
+  /// Throws [Exception] if path contains odd amount of '/'.
   CollectionReference(FirestoreGateway gateway, String path)
       : super(gateway, path) {
     _structuredQuery = StructuredQuery();
@@ -21,6 +28,7 @@ class CollectionReference extends Reference {
     }
   }
 
+  /// Returns a [DocumentReference] with the provided path.
   DocumentReference document(String id) {
     return DocumentReference(gateway, '$path/$id');
   }
@@ -79,7 +87,7 @@ class CollectionReference extends Reference {
       ..compositeFilter = compositeFilter;
     return this;
   }
-  /// Create [StructuredQuery_UnaryFilter] by provided [fieldPath] and [isNull] condition
+  /// Create [StructuredQuery_UnaryFilter] by provided [fieldPath] and [isNull] condition.
   StructuredQuery_UnaryFilter _createUnaryFilter(
       String fieldPath, bool isNull) {
     if (!isNull) {
@@ -92,7 +100,7 @@ class CollectionReference extends Reference {
       ..field_2 = (StructuredQuery_FieldReference()..fieldPath = fieldPath);
   }
 
-  /// Create [StructuredQuery_FieldFilter] by provided condition and [fieldPath]
+  /// Create [StructuredQuery_FieldFilter] by provided condition and [fieldPath].
   StructuredQuery_FieldFilter _createFieldFilter(
     String fieldPath,
     dynamic isEqualTo,
@@ -162,15 +170,16 @@ class CollectionReference extends Reference {
     _structuredQuery.limit = Int32Value()..value = count;
     return this;
   }
-  /// Delegates [FirebaseEncoding.encode] functionality
+  /// Delegates [FirebaseEncoding.encode] functionality.
   fs.Value _encode(dynamic value) {
     return FirestoreEncoding.encode(value);
   }
 
-  /// Fetch the documents for this [_structuredQuery]
+  /// Fetch the documents with a [StructuredQuery].
   Future<List<Document>> getDocuments() =>
       gateway.runQuery(_structuredQuery, fullPath);
 
+  /// Notifies of results at this location.
   Stream<List<Document>> get stream => gateway.streamCollection(fullPath);
 
   /// Create a document with a random id.
