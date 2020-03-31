@@ -36,10 +36,10 @@ class DocumentReference extends Reference {
   @Deprecated('Use the stream getter instead')
   Stream<Document> subscribe() => stream;
 
-  /// Notifies of documents at this location.
+  /// Notifies of document by this reference.
   Stream<Document> get stream => gateway.streamDocument(fullPath);
 
-  /// Check if a document exists.
+  /// Checks if a document by this reference exists.
   Future<bool> get exists async {
     try {
       await get();
@@ -53,20 +53,21 @@ class DocumentReference extends Reference {
     }
   }
 
-  /// Create a document if it doesn't exist, otherwise throw exception.
+  /// Creates a document by this reference if it doesn't exist,
+  /// otherwise throw an exception.
   Future<Document> create(Map<String, dynamic> map) => gateway.createDocument(
       fullPath.substring(0, fullPath.lastIndexOf('/')), id, encodeMap(map));
 
-  /// Create or update a document.
+  /// Creates or updates a document by this reference.
   /// In the case of an update, any fields not referenced in the payload will be deleted.
   Future<void> set(Map<String, dynamic> map) async =>
       gateway.updateDocument(fullPath, encodeMap(map), false);
 
-  /// Create or update a document.
+  /// Creates or updates a document by this reference.
   /// In case of an update, fields not referenced in the payload will remain unchanged.
   Future<void> update(Map<String, dynamic> map) =>
       gateway.updateDocument(fullPath, encodeMap(map), true);
 
-  /// Deletes a document.
+  /// Deletes a document by this reference.
   Future<void> delete() async => await gateway.deleteDocument(fullPath);
 }

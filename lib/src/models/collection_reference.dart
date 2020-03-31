@@ -34,9 +34,9 @@ class CollectionReference extends Reference {
   }
 
   /// Returns [CollectionReference] with additional filter on specified
-  /// [field]. [field] refers to a field in a document.
+  /// [fieldPath]. [fieldPath] refers to a field in a document.
   ///
-  /// The [field] may be a [String] consisting of a single field name
+  /// The [fieldPath] is a [String] consisting of a single field name
   /// (referring to a top level field in the document),
   /// or a series of field names separated by dots '.'
   /// (referring to a nested field in the document).
@@ -87,20 +87,25 @@ class CollectionReference extends Reference {
       ..compositeFilter = compositeFilter;
     return this;
   }
-  /// Create [StructuredQuery_UnaryFilter] by provided [fieldPath] and [isNull] condition.
+
+  /// Creates [StructuredQuery_UnaryFilter] by provided [fieldPath] and [isNull] condition.
   StructuredQuery_UnaryFilter _createUnaryFilter(
-      String fieldPath, bool isNull) {
+    String fieldPath,
+    bool isNull,
+  ) {
     if (!isNull) {
       throw Exception(
           "'isNull': isNull can only be set to true. Use isEqualTo to filter on non-null values.");
     }
     final unaryFilter = StructuredQuery_UnaryFilter();
     unaryFilter.op = StructuredQuery_UnaryFilter_Operator.IS_NULL;
-    return unaryFilter
-      ..field_2 = (StructuredQuery_FieldReference()..fieldPath = fieldPath);
+    final fieldReference = StructuredQuery_FieldReference()
+      ..fieldPath = fieldPath;
+    unaryFilter.field_2 = fieldReference;
+    return unaryFilter;
   }
 
-  /// Create [StructuredQuery_FieldFilter] by provided condition and [fieldPath].
+  /// Creates [StructuredQuery_FieldFilter] by provided condition and [fieldPath].
   StructuredQuery_FieldFilter _createFieldFilter(
     String fieldPath,
     dynamic isEqualTo,
@@ -141,12 +146,14 @@ class CollectionReference extends Reference {
     } else {
       throw Exception('Operator is not specified');
     }
-    return fieldFilter
-      ..field_1 = (StructuredQuery_FieldReference()..fieldPath = fieldPath);
+    final fieldReference = StructuredQuery_FieldReference()
+      ..fieldPath = fieldPath;
+    fieldFilter.field_1 = fieldReference;
+    return fieldFilter;
   }
 
   /// Returns [CollectionReference] that's additionally sorted by the specified
-  /// [field].
+  /// [fieldPath].
   ///
   /// The field is a [String] representing a single field name.
   /// After a [CollectionReference] order by call, you cannot add any more [orderBy]
@@ -170,16 +177,17 @@ class CollectionReference extends Reference {
     _structuredQuery.limit = Int32Value()..value = count;
     return this;
   }
-  /// Delegates [FirebaseEncoding.encode] functionality.
+
+  /// Delegates encoding the given [value] to [FirebaseEncoding.encode].
   fs.Value _encode(dynamic value) {
     return FirestoreEncoding.encode(value);
   }
 
-  /// Fetch the documents with a [StructuredQuery].
+  /// Fetches the documents for this [StructuredQuery].
   Future<List<Document>> getDocuments() =>
       gateway.runQuery(_structuredQuery, fullPath);
 
-  /// Notifies of results at this location.
+  /// Notifies of documents by this reference.
   Stream<List<Document>> get stream => gateway.streamCollection(fullPath);
 
   /// Create a document with a random id.

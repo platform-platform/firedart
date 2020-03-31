@@ -1,9 +1,8 @@
 import 'package:firedart/src/generated/google/firestore/v1/document.pb.dart'
     as fs;
+import 'package:firedart/src/models/document_reference.dart';
 import 'package:firedart/src/repository/firestore_gateway.dart';
 import 'package:firedart/src/util/firestore_encoding.dart';
-
-import 'document_reference.dart';
 
 /// A [Document] contains data read from a document in your Firestore
 /// database.
