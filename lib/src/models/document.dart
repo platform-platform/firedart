@@ -4,9 +4,8 @@ import 'package:firedart/src/models/document_reference.dart';
 import 'package:firedart/src/repository/firestore_gateway.dart';
 import 'package:firedart/src/util/firestore_encoding.dart';
 
-/// A [Document] contains data read from a document in your Firestore
-/// database.
-/// The data can be extracted with the data property.
+/// A [Document] contains [id], [path], field's [data] read from a document
+/// in your Firestore database.
 class Document {
   final FirestoreGateway _gateway;
   final fs.Document _rawDocument;
@@ -21,7 +20,7 @@ class Document {
       _rawDocument.name.substring(_rawDocument.name.indexOf('/documents') + 10);
 
   /// Contains all the data of this document.
-  Map<String, dynamic> get map =>
+  Map<String, dynamic> get data =>
       _rawDocument.fields.map((key, _) => MapEntry(key, this[key]));
 
   /// The reference that produced this document.
@@ -34,5 +33,5 @@ class Document {
   }
 
   @override
-  String toString() => '$path $map';
+  String toString() => '$path $data';
 }

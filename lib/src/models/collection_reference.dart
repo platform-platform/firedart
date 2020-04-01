@@ -15,8 +15,6 @@ class CollectionReference extends Reference {
 
   /// Constructs a [CollectionReference] using [FirestoreGateway] and path.
   ///
-  /// Init [StructuredQuery] with additional filter on collectionId.
-  ///
   /// Throws [Exception] if path contains odd amount of '/'.
   CollectionReference(FirestoreGateway gateway, String path)
       : super(gateway, path) {
