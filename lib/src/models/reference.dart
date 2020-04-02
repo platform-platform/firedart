@@ -11,10 +11,10 @@ abstract class Reference {
   final FirestoreGateway gateway;
   final String path;
 
-  /// Returns the ID of the reference.
+  /// Returns the ID of this reference.
   String get id => path.substring(path.lastIndexOf('/') + 1);
 
-  /// Returns the ID of the fullPath of the reference.
+  /// Returns the full path of this reference.
   String get fullPath => '${gateway.database}/$path';
 
   Reference(this.gateway, String path)
@@ -22,8 +22,8 @@ abstract class Reference {
             ? path.substring(gateway.database.length + 1)
             : path);
 
-  /// Factory method which creates a [DocumentReference] or [CollectionReference]
-  /// depending on the path.
+  /// Creates a [DocumentReference] or [CollectionReference]
+  /// depending on the provided [path].
   factory Reference.create(FirestoreGateway gateway, String path) {
     return _trimSlashes(path).split('/').length % 2 == 0
         ? DocumentReference(gateway, path)
@@ -40,7 +40,7 @@ abstract class Reference {
     return '$runtimeType: $path';
   }
 
-  /// Protected method which helps encode map data.
+  /// Encodes the provided [map] data.
   @protected
   fs.Document encodeMap(Map<String, dynamic> map) {
     var document = fs.Document();
@@ -50,7 +50,7 @@ abstract class Reference {
     return document;
   }
 
-  /// Static method which trims slashes for provided path.
+  /// Trims slashes for the provided [path].
   static String _trimSlashes(String path) {
     path = path.startsWith('/') ? path.substring(1) : path;
     return path.endsWith('/') ? path.substring(0, path.length - 2) : path;

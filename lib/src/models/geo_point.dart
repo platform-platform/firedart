@@ -7,7 +7,7 @@ class GeoPoint {
 
   GeoPoint(this.latitude, this.longitude);
 
-  /// Create [GeoPoint] instance using [LatLng].
+  /// Creates the [GeoPoint] instance using [LatLng].
   GeoPoint.fromLatLng(LatLng value) : this(value.latitude, value.longitude);
 
   @override
@@ -19,6 +19,7 @@ class GeoPoint {
   @override
   String toString() => 'lat: $latitude, lon: $longitude';
 
+  /// Creates the [LatLng] instance corresponding this geo point.
   LatLng toLatLng() => LatLng()
     ..latitude = latitude
     ..longitude = longitude;

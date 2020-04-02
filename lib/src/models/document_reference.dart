@@ -30,7 +30,7 @@ class DocumentReference extends Reference {
 
   /// Reads the document referenced by this [DocumentReference].
   ///
-  /// If no document exists, the read throw [GrpcError].
+  /// If no document exists, the read throws [GrpcError].
   Future<Document> get() => gateway.getDocument(fullPath);
 
   @Deprecated('Use the stream getter instead')

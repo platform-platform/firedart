@@ -23,10 +23,10 @@ class Document {
   Map<String, dynamic> get map =>
       _rawDocument.fields.map((key, _) => MapEntry(key, this[key]));
 
-  /// The reference that produced this document.
+  /// The [DocumentReference] of this document.
   DocumentReference get reference => DocumentReference(_gateway, path);
 
-  /// Reads individual values from the document.
+  /// Reads individual values from this document.
   dynamic operator [](String key) {
     if (!_rawDocument.fields.containsKey(key)) return null;
     return FirestoreEncoding.decode(_rawDocument.fields[key], _gateway);
