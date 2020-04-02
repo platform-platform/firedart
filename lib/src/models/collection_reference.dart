@@ -88,7 +88,7 @@ class CollectionReference extends Reference {
 
   /// Creates [StructuredQuery_UnaryFilter] by provided [fieldPath] and [isNull] condition.
   ///
-  /// Throws [Exception] if the given [isNull] condition is
+  /// Throws [Exception] if the given [isNull] condition is false.
   StructuredQuery_UnaryFilter _createUnaryFilter(
     String fieldPath,
     bool isNull,
