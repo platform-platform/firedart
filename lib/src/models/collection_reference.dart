@@ -87,13 +87,17 @@ class CollectionReference extends Reference {
   }
 
   /// Creates [StructuredQuery_UnaryFilter] by provided [fieldPath] and [isNull] condition.
+  ///
+  /// Throws [Exception] if the given [isNull] condition is
   StructuredQuery_UnaryFilter _createUnaryFilter(
     String fieldPath,
     bool isNull,
   ) {
     if (!isNull) {
       throw Exception(
-          "'isNull': isNull can only be set to true. Use isEqualTo to filter on non-null values.");
+        "'isNull': isNull can only be set to true. "
+        'Use isEqualTo to filter on non-null values.',
+      );
     }
     final unaryFilter = StructuredQuery_UnaryFilter();
     unaryFilter.op = StructuredQuery_UnaryFilter_Operator.IS_NULL;
@@ -104,6 +108,8 @@ class CollectionReference extends Reference {
   }
 
   /// Creates [StructuredQuery_FieldFilter] by provided condition and [fieldPath].
+  ///
+  /// Throws [Exception] if no condition is provided.
   StructuredQuery_FieldFilter _createFieldFilter(
     String fieldPath,
     dynamic isEqualTo,

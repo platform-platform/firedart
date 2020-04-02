@@ -5,17 +5,17 @@ import 'package:firedart/src/repository/firestore_gateway.dart';
 import 'package:firedart/src/util/firestore_encoding.dart';
 
 /// A [Document] contains [id], [path], field's data [map] read from a document
-/// in your Firestore database.
+/// in the Firestore database.
 class Document {
   final FirestoreGateway _gateway;
   final fs.Document _rawDocument;
 
   Document(this._gateway, this._rawDocument);
 
-  /// Returns the ID of the document.
+  /// Returns the ID of this document.
   String get id => path.split('/').last;
 
-  /// Returns the path of the document.
+  /// Returns the path to this document.
   String get path =>
       _rawDocument.name.substring(_rawDocument.name.indexOf('/documents') + 10);
 

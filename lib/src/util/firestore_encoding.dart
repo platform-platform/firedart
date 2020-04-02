@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:firedart/firedart.dart';
 import 'package:firedart/src/generated/google/firestore/v1/document.pb.dart'
     as fs;
@@ -6,31 +8,30 @@ import 'package:firedart/src/generated/google/protobuf/timestamp.pb.dart';
 import 'package:firedart/src/repository/firestore_gateway.dart';
 import 'package:fixnum/fixnum.dart';
 
-/// An abstract util class which provides firestore decode and encode static methods.
+/// A utility class that provides methods for encoding and decoding values
+/// for Firestore.
 abstract class FirestoreEncoding {
-  /// Encode dart object into related [fs.Value].
+  /// Encodes Dart object into the corresponding [fs.Value].
   static fs.Value encode(dynamic value) {
     if (value == null) return fs.Value()..nullValue = NullValue.NULL_VALUE;
 
-    var type = value.runtimeType;
-
-    if (type is List) {
+    if (value is List) {
       var array = fs.ArrayValue();
-      (value as List).forEach((element) => array.values.add(encode(element)));
+      value.forEach((element) => array.values.add(encode(element)));
       return fs.Value()..arrayValue = array;
     }
 
-    if (type is Map) {
+    if (value is Map) {
       var map = fs.MapValue();
-      (value as Map).forEach((key, val) => map.fields[key] = encode(val));
+      value.forEach((key, val) => map.fields[key] = encode(val));
       return fs.Value()..mapValue = map;
     }
 
-    if (type.toString() == 'Uint8List') {
+    if (value is Uint8List) {
       return fs.Value()..bytesValue = value;
     }
 
-    switch (type) {
+    switch (value) {
       case bool:
         return fs.Value()..booleanValue = value;
       case int:
@@ -46,11 +47,11 @@ abstract class FirestoreEncoding {
       case GeoPoint:
         return fs.Value()..geoPointValue = (value as GeoPoint).toLatLng();
       default:
-        throw Exception('Unknown type: ${type}');
+        throw Exception('Unknown type: ${value}');
     }
   }
 
-  /// Decode [fs.value] into related dart object.
+  /// Decodes the given [fs.value] into the corresponding Dart object.
   static dynamic decode(fs.Value value, FirestoreGateway gateway) {
     switch (value.whichValueType()) {
       case fs.Value_ValueType.nullValue:
