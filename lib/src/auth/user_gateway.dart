@@ -5,9 +5,13 @@ import 'package:firedart/src/auth/token_provider.dart';
 
 class UserGateway {
   final UserClient _client;
+  final String authGatewayUrl;
 
-  UserGateway(KeyClient client, TokenProvider tokenProvider)
-      : _client = UserClient(client, tokenProvider);
+  UserGateway(
+    KeyClient client,
+    TokenProvider tokenProvider,
+    this.authGatewayUrl,
+  ) : _client = UserClient(client, tokenProvider);
 
   Future<void> requestEmailVerification() async => _post('sendOobCode', {
         'requestType': 'VERIFY_EMAIL',
@@ -37,8 +41,7 @@ class UserGateway {
 
   Future<Map<String, dynamic>> _post<T>(
       String method, Map<String, String> body) async {
-    var requestUrl =
-        'https://identitytoolkit.googleapis.com/v1/accounts:$method';
+    var requestUrl = '$authGatewayUrl/v1/accounts:$method';
 
     var response = await _client.post(
       requestUrl,

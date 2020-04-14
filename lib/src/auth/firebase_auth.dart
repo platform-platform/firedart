@@ -1,5 +1,6 @@
 import 'package:firedart/src/auth/auth_gateway.dart';
 import 'package:firedart/src/auth/client.dart';
+import 'package:firedart/src/auth/constants/auth_constants.dart';
 import 'package:firedart/src/auth/token_provider.dart';
 import 'package:firedart/src/auth/token_store.dart';
 import 'package:firedart/src/auth/user_gateway.dart';
@@ -9,18 +10,27 @@ class FirebaseAuth {
   /* Singleton interface */
   static FirebaseAuth _instance;
 
-  static FirebaseAuth initialize(String apiKey, TokenStore tokenStore) {
+  static FirebaseAuth initialize(
+    String apiKey,
+    TokenStore tokenStore, {
+    String authGatewayUrl = AuthConstants.authGatewayUrl,
+  }) {
     if (_instance != null) {
       throw Exception('FirebaseAuth instance was already initialized');
     }
-    _instance = FirebaseAuth(apiKey, tokenStore);
+    _instance = FirebaseAuth(
+      apiKey,
+      tokenStore,
+      authGatewayUrl: authGatewayUrl,
+    );
     return _instance;
   }
 
   static FirebaseAuth get instance {
     if (_instance == null) {
       throw Exception(
-          "FirebaseAuth hasn't been initialized. Please call FirebaseAuth.initialize() before using it.");
+        "FirebaseAuth hasn't been initialized. Please call FirebaseAuth.initialize() before using it.",
+      );
     }
     return _instance;
   }
@@ -34,15 +44,27 @@ class FirebaseAuth {
   AuthGateway _authGateway;
   UserGateway _userGateway;
 
-  FirebaseAuth(this.apiKey, TokenStore tokenStore, {this.httpClient})
-      : assert(apiKey.isNotEmpty),
+  FirebaseAuth(
+    this.apiKey,
+    TokenStore tokenStore, {
+    String authGatewayUrl,
+    this.httpClient,
+  })  : assert(apiKey.isNotEmpty),
         assert(tokenStore != null) {
     httpClient ??= http.Client();
     var keyClient = KeyClient(httpClient, apiKey);
     tokenProvider = TokenProvider(keyClient, tokenStore);
 
-    _authGateway = AuthGateway(keyClient, tokenProvider);
-    _userGateway = UserGateway(keyClient, tokenProvider);
+    _authGateway = AuthGateway(
+      keyClient,
+      tokenProvider,
+      authGatewayUrl ?? AuthConstants.authGatewayUrl,
+    );
+    _userGateway = UserGateway(
+      keyClient,
+      tokenProvider,
+      authGatewayUrl ?? AuthConstants.authGatewayUrl,
+    );
   }
 
   bool get isSignedIn => tokenProvider.isSignedIn;
