@@ -5,13 +5,21 @@ import 'package:firedart/src/auth/token_provider.dart';
 
 class UserGateway {
   final UserClient _client;
+
+  /// The authentication server URL used to perform auth related requests.
   final String authGatewayUrl;
 
+  /// Creates an instance of [UserGateway] with the given [client],
+  /// [tokenProvider] and [authGatewayUrl].
+  ///
+  /// Throws an [ArgumentError] if [authGatewayUrl] is `null`.
   UserGateway(
     KeyClient client,
     TokenProvider tokenProvider,
     this.authGatewayUrl,
-  ) : _client = UserClient(client, tokenProvider);
+  ) : _client = UserClient(client, tokenProvider) {
+    ArgumentError.checkNotNull(authGatewayUrl, 'authGatewayUrl');
+  }
 
   Future<void> requestEmailVerification() async => _post('sendOobCode', {
         'requestType': 'VERIFY_EMAIL',
