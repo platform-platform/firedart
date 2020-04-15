@@ -1,7 +1,7 @@
 import 'package:firedart/src/auth/firebase_auth.dart';
-import 'package:firedart/src/models/collection_reference.dart';
-import 'package:firedart/src/models/document_reference.dart';
-import 'package:firedart/src/models/reference.dart';
+import 'package:firedart/src/model/collection_reference.dart';
+import 'package:firedart/src/model/document_reference.dart';
+import 'package:firedart/src/model/reference.dart';
 
 import 'firestore_gateway.dart';
 

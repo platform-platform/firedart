@@ -1,4 +1,4 @@
-import 'package:firedart/src/auth/models/token.dart';
+import 'package:firedart/src/auth/token/model/token.dart';
 import 'package:firedart/src/auth/store/token_store.dart';
 
 /// Doesn't actually persist tokens. Useful for testing or in environments where

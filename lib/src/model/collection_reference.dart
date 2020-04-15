@@ -2,9 +2,9 @@ import 'package:firedart/src/generated/google/firestore/v1/query.pb.dart';
 import 'package:firedart/src/generated/google/protobuf/wrappers.pb.dart';
 import 'package:firedart/src/generated/google/firestore/v1/document.pb.dart'
     as fs;
-import 'package:firedart/src/models/document.dart';
-import 'package:firedart/src/models/document_reference.dart';
-import 'package:firedart/src/models/reference.dart';
+import 'package:firedart/src/model/document.dart';
+import 'package:firedart/src/model/document_reference.dart';
+import 'package:firedart/src/model/reference.dart';
 import 'package:firedart/src/repository/firestore_gateway.dart';
 import 'package:firedart/src/util/firestore_encoding.dart';
 

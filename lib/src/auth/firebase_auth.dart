@@ -1,9 +1,9 @@
 import 'package:firedart/src/auth/client/key_client.dart';
 import 'package:firedart/src/auth/constants/auth_constants.dart';
 import 'package:firedart/src/auth/gateway/auth_gateway.dart';
-import 'package:firedart/src/auth/models/token_provider.dart';
+import 'package:firedart/src/auth/token/provider/token_provider.dart';
 import 'package:firedart/src/auth/gateway/user_gateway.dart';
-import 'package:firedart/src/auth/models/user.dart';
+import 'package:firedart/src/auth/model/user.dart';
 import 'package:firedart/src/auth/store/token_store.dart';
 import 'package:http/http.dart' as http;
 

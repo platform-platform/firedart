@@ -1,4 +1,4 @@
-import 'package:firedart/src/auth/models/token.dart';
+import 'package:firedart/src/auth/token/model/token.dart';
 
 abstract class TokenStore {
   Token _token;

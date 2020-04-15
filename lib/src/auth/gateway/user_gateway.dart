@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:firedart/src/auth/client/key_client.dart';
 import 'package:firedart/src/auth/client/user_client.dart';
-import 'package:firedart/src/auth/models/user.dart';
-import 'package:firedart/src/auth/models/token_provider.dart';
+import 'package:firedart/src/auth/model/user.dart';
+import 'package:firedart/src/auth/token/provider/token_provider.dart';
 
 class UserGateway {
   final UserClient _client;
