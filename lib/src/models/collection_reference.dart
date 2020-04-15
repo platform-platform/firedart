@@ -11,14 +11,13 @@ import 'package:firedart/src/util/firestore_encoding.dart';
 /// A [CollectionReference] object can be used for adding documents, getting
 /// document references, and querying for documents.
 class CollectionReference extends Reference {
-  StructuredQuery _structuredQuery;
+  final StructuredQuery _structuredQuery = StructuredQuery();
 
   /// Constructs a [CollectionReference] using [FirestoreGateway] and path.
   ///
   /// Throws [Exception] if path contains odd amount of '/'.
   CollectionReference(FirestoreGateway gateway, String path)
       : super(gateway, path) {
-    _structuredQuery = StructuredQuery();
     _structuredQuery.from
         .add(StructuredQuery_CollectionSelector()..collectionId = id);
     if (fullPath.split('/').length % 2 == 1) {
