@@ -56,7 +56,9 @@ class AuthGateway {
     );
 
     if (response.statusCode != 200) {
-      throw Exception('${response.statusCode}: ${response.reasonPhrase}');
+      final responseBody = json.decode(response.body);
+      final reasonPhrase = responseBody['error']['message'];
+      throw Exception('${response.statusCode}: $reasonPhrase');
     }
 
     return json.decode(response.body) as Map<String, dynamic>;
