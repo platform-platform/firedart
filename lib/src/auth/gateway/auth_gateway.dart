@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:firedart/src/auth/client/key_client.dart';
+import 'package:firedart/src/auth/exception/auth_exception.dart';
 import 'package:firedart/src/auth/model/user.dart';
 import 'package:firedart/src/auth/token/provider/token_provider.dart';
 
@@ -46,8 +47,9 @@ class AuthGateway {
   }
 
   Future<Map<String, dynamic>> _post(
-      String method, Map<String, String> body) async {
-
+    String method,
+    Map<String, String> body,
+  ) async {
     final requestUrl = '$authGatewayUrl/v1/accounts:$method';
 
     final response = await client.post(
@@ -56,11 +58,27 @@ class AuthGateway {
     );
 
     if (response.statusCode != 200) {
-      final responseBody = json.decode(response.body);
-      final reasonPhrase = responseBody['error']['message'];
-      throw Exception('${response.statusCode}: $reasonPhrase');
+      if (response.body == null) {
+        throw AuthException(
+          response.statusCode.toString(),
+          response.reasonPhrase,
+        );
+      }
+      final responseBody = json.decode(response.body) as Map<String, dynamic>;
+      final code = _parseCodeFromJson(responseBody);
+      throw AuthException.fromCode(code);
     }
 
     return json.decode(response.body) as Map<String, dynamic>;
+  }
+
+  String _parseCodeFromJson(Map<String, dynamic> json) {
+    final errorMap = json['error'];
+
+    if (errorMap == null) {
+      return null;
+    }
+
+    return errorMap['message'] as String;
   }
 }
