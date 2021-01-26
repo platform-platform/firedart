@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:firedart/firedart.dart';
 import 'package:firedart/src/generated/google/firestore/v1/document.pb.dart'
-as fs;
+    as fs;
 import 'package:firedart/src/generated/google/protobuf/struct.pbenum.dart';
 import 'package:firedart/src/generated/google/protobuf/timestamp.pb.dart';
 import 'package:firedart/src/repository/firestore_gateway.dart';

@@ -1,5 +1,5 @@
 import 'package:firedart/src/generated/google/firestore/v1/document.pb.dart'
-as fs;
+    as fs;
 import 'package:firedart/src/model/document_reference.dart';
 import 'package:firedart/src/repository/firestore_gateway.dart';
 import 'package:firedart/src/util/firestore_encoding.dart';
