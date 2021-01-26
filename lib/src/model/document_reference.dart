@@ -39,20 +39,6 @@ class DocumentReference extends Reference {
   /// Notifies of document by this reference.
   Stream<Document> get stream => gateway.streamDocument(fullPath);
 
-  /// Checks if a document by this reference exists.
-  Future<bool> get exists async {
-    try {
-      await get();
-      return true;
-    } on GrpcError catch (e) {
-      if (e.code == StatusCode.notFound) {
-        return false;
-      } else {
-        rethrow;
-      }
-    }
-  }
-
   /// Creates a document by this reference if it doesn't exist,
   /// otherwise throw an exception.
   Future<Document> create(Map<String, dynamic> map) => gateway.createDocument(

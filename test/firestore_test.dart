@@ -15,6 +15,12 @@ Future main() async {
   final firestore = Firestore(projectId, auth: auth);
   await auth.signIn(email, password);
 
+  Future<bool> _isDocumentExists(DocumentReference documentReference) async {
+    final document = await documentReference.get();
+
+    return document.exists;
+  }
+
   test('Create reference', () async {
     // Ensure document exists
     final reference = firestore.document('test/reference');
@@ -35,45 +41,55 @@ Future main() async {
   });
 
   test('Add and delete collection document', () async {
-    final reference = firestore.collection('test');
-    final docReference = await reference.add({'field': 'test'});
-    expect(docReference['field'], 'test');
-    final document = reference.document(docReference.id);
-    expect(await document.exists, true);
-    await document.delete();
-    expect(await document.exists, false);
+    final collection = firestore.collection('test');
+    final document = await collection.add({'field': 'test'});
+    expect(document['field'], 'test');
+
+    final docReference = collection.document(document.id);
+    expect(_isDocumentExists(docReference), completion(true));
+
+    await docReference.delete();
+    expect(_isDocumentExists(docReference), completion(false));
   });
 
   test('Add and delete named document', () async {
-    final reference = firestore.document('test/add_remove');
-    await reference.set({'field': 'test'});
-    expect(await reference.exists, true);
-    await reference.delete();
-    expect(await reference.exists, false);
+    final docReference = firestore.document('test/add_remove');
+
+    await docReference.set({'field': 'test'});
+    expect(_isDocumentExists(docReference), completion(true));
+
+    await docReference.delete();
+    expect(_isDocumentExists(docReference), completion(false));
   });
 
   test('Path with leading slash', () async {
-    final reference = firestore.document('/test/path');
-    await reference.set({'field': 'test'});
-    expect(await reference.exists, true);
-    await reference.delete();
-    expect(await reference.exists, false);
+    final docReference = firestore.document('/test/path');
+
+    await docReference.set({'field': 'test'});
+    expect(_isDocumentExists(docReference), completion(true));
+
+    await docReference.delete();
+    expect(_isDocumentExists(docReference), completion(false));
   });
 
   test('Path with trailing slash', () async {
-    final reference = firestore.document('test/path/');
-    await reference.set({'field': 'test'});
-    expect(await reference.exists, true);
-    await reference.delete();
-    expect(await reference.exists, false);
+    final docReference = firestore.document('test/path/');
+
+    await docReference.set({'field': 'test'});
+    expect(_isDocumentExists(docReference), completion(true));
+
+    await docReference.delete();
+    expect(_isDocumentExists(docReference), completion(false));
   });
 
   test('Path with leading and trailing slashes', () async {
-    final reference = firestore.document('/test/path/');
-    await reference.set({'field': 'test'});
-    expect(await reference.exists, true);
-    await reference.delete();
-    expect(await reference.exists, false);
+    final docReference = firestore.document('/test/path/');
+
+    await docReference.set({'field': 'test'});
+    expect(_isDocumentExists(docReference), completion(true));
+
+    await docReference.delete();
+    expect(_isDocumentExists(docReference), completion(false));
   });
 
   test('Read data from document', () async {
@@ -129,6 +145,7 @@ Future main() async {
     final reference = firestore.collection('test').document('types');
     final dateTime = DateTime.now();
     const geoPoint = GeoPoint(38.7223, 9.1393);
+
     await reference.set({
       'null': null,
       'bool': true,
@@ -142,6 +159,7 @@ Future main() async {
       'list': [1, 'text'],
       'map': {'int': 1, 'string': 'text'},
     });
+
     final doc = await reference.get();
     expect(doc['null'], null);
     expect(doc['bool'], true);

@@ -1,5 +1,5 @@
 import 'package:firedart/src/generated/google/firestore/v1/document.pb.dart'
-    as fs;
+as fs;
 import 'package:firedart/src/model/document_reference.dart';
 import 'package:firedart/src/repository/firestore_gateway.dart';
 import 'package:firedart/src/util/firestore_encoding.dart';
@@ -18,6 +18,9 @@ class Document {
   /// Returns the path to this document.
   String get path =>
       _rawDocument.name.substring(_rawDocument.name.indexOf('/documents') + 10);
+
+  /// Returns `true` if the [Document] exists.
+  bool get exists => _rawDocument.hasCreateTime();
 
   /// Contains all the data of this document.
   Map<String, dynamic> get map => _rawDocument.fields.isEmpty
