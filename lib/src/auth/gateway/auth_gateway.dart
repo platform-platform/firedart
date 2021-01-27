@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:firedart/src/auth/client/key_client.dart';
-import 'package:firedart/src/auth/exception/auth_exception.dart';
+import 'package:firedart/src/auth/exception/firebase_auth_exception.dart';
 import 'package:firedart/src/auth/model/user.dart';
 import 'package:firedart/src/auth/token/provider/token_provider.dart';
 
@@ -59,20 +59,22 @@ class AuthGateway {
 
     if (response.statusCode != 200) {
       if (response.body == null) {
-        throw AuthException(
+        throw FirebaseAuthException(
           response.statusCode.toString(),
           response.reasonPhrase,
         );
       }
       final responseBody = json.decode(response.body) as Map<String, dynamic>;
       final code = _parseCodeFromJson(responseBody);
-      throw AuthException.fromCode(code);
+      throw FirebaseAuthException.fromCode(code);
     }
 
     return json.decode(response.body) as Map<String, dynamic>;
   }
 
   String _parseCodeFromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+
     final errorMap = json['error'];
 
     if (errorMap == null) {
