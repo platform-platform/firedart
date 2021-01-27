@@ -19,6 +19,9 @@ class Document {
   String get path =>
       _rawDocument.name.substring(_rawDocument.name.indexOf('/documents') + 10);
 
+  /// Returns `true` if the [Document] exists.
+  bool get exists => _rawDocument.hasCreateTime();
+
   /// Contains all the data of this document.
   Map<String, dynamic> get map => _rawDocument.fields.isEmpty
       ? null

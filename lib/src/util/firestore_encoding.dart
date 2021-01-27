@@ -15,42 +15,54 @@ abstract class FirestoreEncoding {
   static fs.Value encode(dynamic value) {
     if (value == null) return fs.Value()..nullValue = NullValue.NULL_VALUE;
 
-    final type = value.runtimeType as Type;
-
-    if (type is List) {
+    if (value is List) {
       final array = fs.ArrayValue();
-      value.forEach((element) => array.values.add(encode(element)));
+
+      for (final element in value) {
+        array.values.add(encode(element));
+      }
+
       return fs.Value()..arrayValue = array;
     }
 
-    if (type is Map) {
+    if (value is Map) {
       final map = fs.MapValue();
       value.forEach((key, val) => map.fields[key as String] = encode(val));
       return fs.Value()..mapValue = map;
     }
 
-    if (type is Uint8List) {
-      return fs.Value()..bytesValue = value as List<int>;
+    if (value is Uint8List) {
+      return fs.Value()..bytesValue = value;
     }
 
-    switch (type) {
-      case bool:
-        return fs.Value()..booleanValue = value as bool;
-      case int:
-        return fs.Value()..integerValue = Int64(value as int);
-      case double:
-        return fs.Value()..doubleValue = value as double;
-      case DateTime:
-        return fs.Value()..timestampValue = Timestamp.fromDateTime(value as DateTime);
-      case String:
-        return fs.Value()..stringValue = value as String;
-      case DocumentReference:
-        return fs.Value()..referenceValue = value._fullPath as String;
-      case GeoPoint:
-        return fs.Value()..geoPointValue = (value as GeoPoint).toLatLng();
-      default:
-        throw Exception('Unknown type: $value');
+    if (value is bool) {
+      return fs.Value()..booleanValue = value;
     }
+
+    if (value is int) {
+      return fs.Value()..integerValue = Int64(value);
+    }
+
+    if (value is double) {
+      return fs.Value()..doubleValue = value;
+    }
+
+    if (value is DateTime) {
+      return fs.Value()..timestampValue = Timestamp.fromDateTime(value);
+    }
+
+    if (value is String) {
+      return fs.Value()..stringValue = value;
+    }
+    if (value is DocumentReference) {
+      return fs.Value()..referenceValue = value.fullPath;
+    }
+
+    if (value is GeoPoint) {
+      return fs.Value()..geoPointValue = value.toLatLng();
+    }
+
+    throw Exception('Unknown type: $value');
   }
 
   /// Decodes the given [fs.value] into the corresponding Dart object.
