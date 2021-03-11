@@ -7,7 +7,7 @@ class FirebaseAuthErrorCodeMapper {
   static String map(String code) {
     switch (code) {
       case FirebaseAuthErrorCode.emailNotFound:
-        return 'The email address is badly formatted.';
+        return 'There is no user record corresponding to this identifier. The user may have been deleted.';
       case FirebaseAuthErrorCode.invalidPassword:
         return 'The password is invalid or the user does not have a password.';
       case FirebaseAuthErrorCode.userNotFound:

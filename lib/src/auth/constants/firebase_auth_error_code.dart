@@ -22,7 +22,7 @@ class FirebaseAuthErrorCode {
   /// is not enabled.
   static const String operationNotAllowed = 'OPERATION_NOT_ALLOWED';
 
-  /// An error code that indicates the provided Firebase API key is not invalid.
+  /// An error code that indicates the provided Firebase API key is not valid.
   static const String invalidApiKey =
       'API key not valid. Please pass a valid API key.';
 }
