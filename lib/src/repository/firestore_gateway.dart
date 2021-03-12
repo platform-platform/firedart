@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firedart/firedart.dart';
+import 'package:firedart/src/auth/exception/firestore_exception_factory.dart';
 import 'package:firedart/src/generated/google/firestore/v1/common.pb.dart';
 import 'package:firedart/src/generated/google/firestore/v1/document.pb.dart'
     as fs;
@@ -164,17 +165,25 @@ class FirestoreGateway {
   }
 
   void _handleError(e) {
-    if (e is GrpcError &&
-        [
-          StatusCode.unknown,
-          StatusCode.unimplemented,
-          StatusCode.internal,
-          StatusCode.unavailable,
-          StatusCode.dataLoss,
-        ].contains(e.code)) {
-      _setupClient();
+    if (e is GrpcError) {
+      if (_isUnexpectedCode(e.code)) _setupClient();
+
+      final firestoreException = FirestoreExceptionFactory.create(e);
+
+      throw firestoreException;
     }
+
     throw e;
+  }
+
+  bool _isUnexpectedCode(int code) {
+    return [
+      StatusCode.unknown,
+      StatusCode.unimplemented,
+      StatusCode.internal,
+      StatusCode.unavailable,
+      StatusCode.dataLoss,
+    ].contains(code);
   }
 
   void _initStream() {

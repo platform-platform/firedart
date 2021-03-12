@@ -1,6 +1,7 @@
 import 'package:firedart/src/auth/exception/firebase_auth_exception_code.dart';
 
-/// A mapper that maps [FirebaseAuthExceptionCode]s to human-readable messages.
+/// A class that provides methods for mapping [FirebaseAuthExceptionCode]s into
+/// human-readable messages.
 class FirebaseAuthExceptionMessageMapper {
   /// Maps the given [code] into the human-readable error description.
   static String map(FirebaseAuthExceptionCode code) {
