@@ -56,6 +56,7 @@ class FirestoreGateway {
     return stream
         .where((response) =>
             response.hasDocumentChange() || response.hasDocumentDelete())
+        .handleError(_handleError)
         .map((response) {
       if (response.hasDocumentChange()) {
         map[response.documentChange.document.name] =
@@ -95,6 +96,7 @@ class FirestoreGateway {
     return response
         .where((event) => event.hasDocument())
         .map((event) => Document(this, event.document))
+        .handleError(_handleError)
         .toList();
   }
 
@@ -154,7 +156,7 @@ class FirestoreGateway {
           (response) => response.hasDocumentChange()
               ? Document(this, response.documentChange.document)
               : null,
-        );
+        ).handleError(_handleError);
   }
 
   void _setupClient() {
