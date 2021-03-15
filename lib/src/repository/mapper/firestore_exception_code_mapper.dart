@@ -1,4 +1,4 @@
-import 'package:firedart/src/auth/exception/firestore_exception_code.dart';
+import 'package:firedart/src/repository/exception/firestore_exception_code.dart';
 
 /// A class that provides methods for mapping [FirestoreExceptionCode]s.
 class FirestoreExceptionCodeMapper {

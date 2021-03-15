@@ -17,13 +17,11 @@ class FirebaseAuthException implements Exception {
   /// Creates a new instance of the [FirebaseAuthException] using the given
   /// [code].
   ///
-  /// Uses the [FirebaseAuthExceptionCodeMapper] to map the given [code] into
-  /// the [FirebaseAuthExceptionCode].
-  /// Uses the [FirebaseAuthExceptionMessageMapper] to map the exception code
-  /// into the human-readable [message].
+  /// Uses the [FirebaseAuthExceptionCodeMapper] and 
+  /// [FirebaseAuthExceptionMessageMapper] to map the 
+  /// [FirebaseAuthExceptionCode] and create a [message] respectively.
   factory FirebaseAuthException.fromCode(String code) {
     final exceptionCode = FirebaseAuthExceptionCodeMapper.map(code);
-
     final message = FirebaseAuthExceptionMessageMapper.map(exceptionCode);
 
     return FirebaseAuthException(exceptionCode, message);

@@ -58,11 +58,12 @@ class AuthGateway {
     );
 
     if (response.statusCode != 200) {
-      final responseBody = response.body.isNotEmpty
-          ? json.decode(response.body) as Map<String, dynamic>
+      final responseBody = response.body ?? '';
+      final json = responseBody.isNotEmpty
+          ? jsonDecode(responseBody) as Map<String, dynamic>
           : null;
 
-      final code = _parseCodeFromJson(responseBody);
+      final code = _parseCodeFromJson(json);
 
       throw FirebaseAuthException.fromCode(code);
     }

@@ -2,24 +2,24 @@ import 'package:firedart/firedart.dart';
 
 /// Represents a [FirebaseAuthException] code.
 enum FirebaseAuthExceptionCode {
-  /// Indicates whether the Firebase API key is not valid.
+  /// An exception code indicating that the Firebase API key is not valid.
   invalidApiKey,
 
-  /// Indicates whether the user with such email is not found.
+  /// An exception code indicating that the user with such email is not found.
   emailNotFound,
 
-  /// Indicates whether the password is invalid.
+  /// An exception code indicating that the password is invalid.
   invalidPassword,
 
-  /// Indicates whether the password sign-in option is disabled.
+  /// An exception code indicating that the password sign-in option is disabled.
   passwordLoginDisabled,
 
-  /// Indicates whether the user has been disabled.
+  /// An exception code indicating that the user has been disabled.
   userDisabled,
 
-  /// Indicates whether there was too many attempts to sign in a user.
+  /// An exception code indicating thatthere was too many attempts to sign in a user.
   tooManyAttempts,
 
-  /// Indicates whether an unknown error has occurred.
+  /// An exception code indicating that an unknown error has occurred.
   unknown,
 }

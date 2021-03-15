@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:firedart/firedart.dart';
-import 'package:firedart/src/auth/exception/firestore_exception_factory.dart';
 import 'package:firedart/src/generated/google/firestore/v1/common.pb.dart';
 import 'package:firedart/src/generated/google/firestore/v1/document.pb.dart'
     as fs;
 import 'package:firedart/src/generated/google/firestore/v1/firestore.pbgrpc.dart';
 import 'package:firedart/src/generated/google/firestore/v1/query.pb.dart';
+import 'package:firedart/src/repository/exception/firestore_exception_factory.dart';
 import 'package:grpc/grpc.dart';
 
 import 'token_authenticator.dart';
@@ -164,16 +164,16 @@ class FirestoreGateway {
     stream = null;
   }
 
-  void _handleError(e) {
-    if (e is GrpcError) {
-      if (_isUnexpectedCode(e.code)) _setupClient();
+  void _handleError(Object error) {
+    if (error is GrpcError) {
+      if (_isUnexpectedCode(error.code)) _setupClient();
 
-      final firestoreException = FirestoreExceptionFactory.create(e);
+      final firestoreException = FirestoreExceptionFactory.create(error);
 
       throw firestoreException;
     }
 
-    throw e;
+    throw error;
   }
 
   bool _isUnexpectedCode(int code) {
