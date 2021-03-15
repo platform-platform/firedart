@@ -6,6 +6,7 @@ import 'package:firedart/src/generated/google/firestore/v1/document.pb.dart'
     as fs;
 import 'package:firedart/src/generated/google/firestore/v1/firestore.pbgrpc.dart';
 import 'package:firedart/src/generated/google/firestore/v1/query.pb.dart';
+import 'package:firedart/src/repository/exception/firestore_exception_factory.dart';
 import 'package:grpc/grpc.dart';
 
 import 'token_authenticator.dart';
@@ -55,6 +56,7 @@ class FirestoreGateway {
     return stream
         .where((response) =>
             response.hasDocumentChange() || response.hasDocumentDelete())
+        .handleError(_handleError)
         .map((response) {
       if (response.hasDocumentChange()) {
         map[response.documentChange.document.name] =
@@ -94,6 +96,7 @@ class FirestoreGateway {
     return response
         .where((event) => event.hasDocument())
         .map((event) => Document(this, event.document))
+        .handleError(_handleError)
         .toList();
   }
 
@@ -153,7 +156,7 @@ class FirestoreGateway {
           (response) => response.hasDocumentChange()
               ? Document(this, response.documentChange.document)
               : null,
-        );
+        ).handleError(_handleError);
   }
 
   void _setupClient() {
@@ -163,18 +166,26 @@ class FirestoreGateway {
     stream = null;
   }
 
-  void _handleError(e) {
-    if (e is GrpcError &&
-        [
-          StatusCode.unknown,
-          StatusCode.unimplemented,
-          StatusCode.internal,
-          StatusCode.unavailable,
-          StatusCode.dataLoss,
-        ].contains(e.code)) {
-      _setupClient();
+  void _handleError(Object error) {
+    if (error is GrpcError) {
+      if (_isUnexpectedCode(error.code)) _setupClient();
+
+      final firestoreException = FirestoreExceptionFactory.create(error);
+
+      throw firestoreException;
     }
-    throw e;
+
+    throw error;
+  }
+
+  bool _isUnexpectedCode(int code) {
+    return [
+      StatusCode.unknown,
+      StatusCode.unimplemented,
+      StatusCode.internal,
+      StatusCode.unavailable,
+      StatusCode.dataLoss,
+    ].contains(code);
   }
 
   void _initStream() {
