@@ -1,10 +1,9 @@
 import 'package:firedart/src/repository/exception/firestore_exception.dart';
 import 'package:firedart/src/repository/mapper/firestore_exception_code_mapper.dart';
 import 'package:grpc/grpc.dart';
-import 'package:grpc/grpc_web.dart';
 import 'package:protobuf/protobuf.dart';
 
-/// A factory class that creates a new instance of the [FirestoreException] 
+/// A factory class that creates a new instance of the [FirestoreException]
 /// using the [GrpcError].
 class FirestoreExceptionFactory {
   /// Creates a new instance of the [FirestoreException] using the given [error].
